@@ -75,7 +75,7 @@
     }
 
     $(document).ready(function() {
-      $.getJSON('vattern2024.json')
+      $.getJSON('https://raw.githubusercontent.com/FreddanL74/Vattern2024/refs/heads/main/vattern2024.json')
         .done(json => { data = json; update(); })
         .fail((jqxhr, textStatus, error) => {
           console.error('Failed to load data:', error);
