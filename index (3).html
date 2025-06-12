@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vätternrundan 2024 314 km Resultat</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <style>
+    body { padding: 10px; font-size: 1em; }
+    .container-fluid { padding-left: 5px; padding-right: 5px; }
+    #resultsTable { font-size: 1em; margin-left: 0 !important; }
+    .pagination { font-size: 0.8em; }
+    .pagination li.disabled a, .pagination li.disabled span { pointer-events: none; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <h1>Vätternrundan 2024 314 km Resultat</h1>
+    <table class="table table-striped" id="resultsTable">
+      <thead><tr><th>Startnr</th><th>Name</th><th>Ort</th><th>Placement</th><th>Result</th><th>Starttime</th><th>Arrival Ödeshög</th><th>Split Ödeshög</th><th>Speed Ödeshög</th><th>Arrival Jönköping</th><th>Split Jönköping</th><th>Speed Jönköping</th><th>Leaving Jönköping</th><th>Split Leaving Jönköping</th><th>Arrival Hjo</th><th>Split Hjo</th><th>Speed Hjo</th><th>Leaving Hjo</th><th>Split Leaving Hjo</th><th>Arrival Karlsborg</th><th>Split Karlsborg</th><th>Speed Karlsborg</th><th>Arrival Askersund</th><th>Split Askersund</th><th>Speed Askersund</th><th>Arrival Bona</th><th>Split Bona</th><th>Speed Bona</th><th>Arrival Goal</th><th>Split Goal</th><th>Speed Goal</th><th>Cleaned_Result</th><th>Has_Result</th><th>Has_Starttime</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <nav><ul class="pagination" id="pagination"></ul></nav>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script>
+    const pageSize = 50;
+    let currentPage = 1;
+    let data = [];
+
+    function renderTable() {
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const pageItems = data.slice(start, end);
+      const tbody = $('#resultsTable tbody').empty();
+      const keys = ["Startnr", "Name", "Ort", "Placement", "Result", "Starttime", "Arrival \u00d6desh\u00f6g", "Split \u00d6desh\u00f6g", "Speed \u00d6desh\u00f6g", "Arrival J\u00f6nk\u00f6ping", "Split J\u00f6nk\u00f6ping", "Speed J\u00f6nk\u00f6ping", "Leaving J\u00f6nk\u00f6ping", "Split Leaving J\u00f6nk\u00f6ping", "Arrival Hjo", "Split Hjo", "Speed Hjo", "Leaving Hjo", "Split Leaving Hjo", "Arrival Karlsborg", "Split Karlsborg", "Speed Karlsborg", "Arrival Askersund", "Split Askersund", "Speed Askersund", "Arrival Bona", "Split Bona", "Speed Bona", "Arrival Goal", "Split Goal", "Speed Goal", "Cleaned_Result", "Has_Result", "Has_Starttime"];
+      pageItems.forEach(row => {
+        const tr = $('<tr>');
+        keys.forEach(key => {
+          let v = row[key];
+          if (typeof v === 'string') v = v.trim();
+          if (v == null || v === '') v = '–';
+          tr.append($('<td>').text(v));
+        });
+        tbody.append(tr);
+      });
+    }
+
+    function renderPagination() {
+      const pageCount = Math.ceil(data.length / pageSize);
+      const ul = $('#pagination').empty();
+      ul.append($('<li>').toggleClass('disabled', currentPage === 1)
+        .append($('<a>').html('&laquo;').click(() => { if (currentPage > 1) { currentPage--; update(); } })));
+      for (let i = 1; i <= pageCount; i++) {
+        ul.append($('<li>').toggleClass('active', i === currentPage)
+          .append($('<a>').text(i).click(() => { currentPage = i; update(); })));
+      }
+      ul.append($('<li>').toggleClass('disabled', currentPage === pageCount)
+        .append($('<a>').html('&raquo;').click(() => { if (currentPage < pageCount) { currentPage++; update(); } })));
+    }
+
+    function update() {
+      renderTable();
+      renderPagination();
+    }
+
+    $(document).ready(function() {
+      $.getJSON('vattern2024.json')
+        .done(json => { data = json; update(); })
+        .fail((_, __, error) => { console.error('Failed to load JSON:', error); alert('Could not load data, see console.'); });
+    });
+  </script>
+</body>
+</html>
